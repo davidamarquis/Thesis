@@ -1,0 +1,232 @@
+\documentclass[a4paper]{article}
+
+\usepackage{anysize,amsfonts,amsmath,amsthm,amssymb,nicefrac,natbib,url}
+\usepackage[ruled,noline]{algorithm2e}
+
+\let\chapter\section
+\bibliographystyle{plainnat}
+
+\marginsize{2cm}{2cm}{1cm}{1cm}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{mydef}{Definition}
+
+\pagenumbering{arabic}
+
+\def\Fp {{ \mathbb{F} _ {p} }}
+\def\Fq {{ \mathbb{F} _ {q} }}
+\def\ord {{ \mathrm{ord} }}
+\def\ords {{ \mathrm{ord \hspace{2pt}} }}
+\def\poly {{ \mathrm{poly} }}
+\def\cons {{ \mathrm{constant} }}
+\def\lg {{ \mathrm{lg \hspace{2pt}} }}
+\def\Ind {{ \mathrm{Ind} }}
+\def\Indd {{ \mathrm{Ind_d} }}
+\def\lcm {{ \mathrm{lcm} }}
+\def\deg {{ \mathrm{deg}}}
+
+\begin{document}
+
+\title{Factoring Polynomials over Finite Fields}
+\author{David Marquis
+    \texttt{david.marquis@carleton.ca}}
+\date{\today}
+\maketitle
+
+%
+\begin{abstract} \
+%
+
+\end{abstract}
+
+%
+\section*{Chapter 1 - Introduction} 
+
+In this thesis we consider the problem of factoring polynomials over finite fields. Let $q$ be a prime power, $\Fq$ a finite field. Given a monic, univariate polynomial $f \in \Fq[X]$, we want to find the complete factorization $f = f_1^{e_1} \cdots f_k^{e_k}$ , where $f_1 \dots f_k$ are pairwise distinct monic irreducible polynomials and $e_1, \dots e_k$ are positive integers. 
+
+Computing the complete factorization reduces to the following problem. Given a monic, univariate polynomial $f \in \Fq[X]$ find monic polynomials $f_1$ and $f_2$ st $f = f_1f_2$ and $0 < \deg(f_1) < \deg(f_2) < \deg(f)$. By an algorithm for polynomial factorization over finite fields (FPFF) we mean an algorithm that solves the above problem. 
+
+FPFF has applications in computer algebra, coding theory, and cryptography. There are a number of algorithms that solve this problem in polynomial time: the number of operations used is polynomial in $\deg(f)$ and $\log(q)$. An issue with the existing algorithms is that they are probabilistic rather than deterministic. A longstanding question is if an algorithm for this problem exists that is deterministic and polynomial time. For many computational problems it has proved possible to construct probabilistic algorithms more easily then deterministic ones. However, in many instances it has been possible to eventually replace these probabilistic algorithm's with more sophisticated deterministic algorithms. 
+
+The first explicit description of a probabilistic algorithm was Pocklington's 1917 algorithm for computing square roots in finite fields, a special case of FPFF. A polynomial time algorithm for solving the general FPFF problem probabilistically was given by Berlekamp in 1970. Since that time there has been little progress on solving the problem deterministically and unconditionally. More progress has been made on this problem assuming conjectures such as the Riemann Hypothesis, or generalization of it like the Extended Riemann Hypothesis, and the Generalized Riemann Hypothesis. We give a new partial result on deterministically factoring polynomials over finite fields assuming the Generalized Riemann Hypothesis. 
+
+\section{Chapter 2 - Background}
+
+\begin{mydef}
+If $F$ is a nonempty a field then  a function from $F$ to the nonnegative real numbers is a norm if it satisfies the following properties \\
+(1) $|x|=0$ iff $x=0$ \\
+(2) $|xy|=|x||y|$ \\
+(3) $|x+y| \leq |x|+|y|$
+\end{mydef}
+
+\begin{mydef}
+If $M$ is a nonempty a set and $\lambda$ a function from pairs of elements $(\gamma, \tau)$ to the nonnegative real numbers then $\lambda$ is a metric if it satisfies the following properties: \\
+(1) $\lambda(\gamma,\tau)=\lambda(\tau,\gamma)$
+(2) $\lambda(\gamma, \tau)=\lambda(\gamma,\rho)+\lambda(\rho, \tau)$ for all $\rho \in M$
+(3) $\lambda(\gamma, \tau)=0$ iff $x=y$
+\end{mydef}
+
+If $\lambda$ is a norm then the pair $(M, \lambda)$ is called a metric space. The properties are called symmetry, triangle inequality, and identity of indiscernibles respectively. If $|\cdot|$ is a norm then $d(x, y) = |x-y|$ is a metric. Let $x$ be a nonnegative integer, $l$ be a prime, and $t$ be the largest power of $l$ dividing $x$ let
+
+\begin{mydef}
+The group of units of a ring $R$ is denoted $R^*$.
+\end{mydef}
+
+\begin{mydef} 
+Let $x$ and $d$ be positive integers then $v_d(x)$ is the largest power of $d$ dividing $x$.
+\end{mydef}
+
+\subsection{Finite Fields Background}
+
+To Do: Stuff on finite fields. Existence and isomorphism of equal element finite fields. \\
+
+\begin{mydef} 
+Let $x \in \Fq$ then $\ord(x)$ is the multiplicative order of $x$ in $\Fq$.
+\end{mydef}
+
+\begin{mydef} 
+Let $g$ be a primitive root in $\Fq$ then $\Ind(x)$ wrt $g$ is the least $k$ st $g^k = x$ in $\Fq$.
+\end{mydef}
+
+\begin{mydef} 
+A primitive $d$th root of unity in $\Fq$ is an element $x$ st $x^d = 1$ and $x^{d/r} \not= 1$ for each prime $r$ dividing $d$. 
+\end{mydef} 
+
+\begin{mydef} 
+A primitive root (also called a generator) in $\Fq^*$ is an element $x$ st $\ord(x) = q - 1$. 
+\end{mydef} 
+
+\begin{mydef}
+Let $\Fq$ be a finite field. The Frobenius automorphism is defined
+$$\tau(\alpha) = \alpha^q$$
+for any $\alpha \in \Fq$.
+\end{mydef}
+
+To Do: Stuff on polynomials over finite fields. \\
+
+\begin{mydef}
+Let $k$ be a field. Every polynomial over $k$ has a unique factorization. Polynomials in which no factor appears in the factorization more than once are called squarefree. Polynomials which are products of linear factors are said to be splitting 
+\end{mydef}
+
+
+
+\subsection{Deterministic Algorithms related to factoring polynomials}
+
+\noindent Bach and Shallit use notation which can simplify the statements of some of the theorems on polynomial factorization
+
+For $n$ a positive integer
+$$
+\lg n = 
+\begin{cases} 
+  1                   : n=0 \\
+	1+\log_2(n)        : n\not= 0
+\end{cases}
+$$
+
+For a finite field $F$ define
+$$
+\lg f = 
+\begin{cases} 
+  1                   : f=0 \\
+	(1+\deg f)(\lg |F|) : f \not= 0
+\end{cases}
+$$
+
+\begin{thm} (Bach and Shallit [1996])
+Let $f$ be a nonzero polynomial in $\Fq[X]$, $R =\Fq[X]/(f)$ \\
+(a) Addition and subtraction of elements in $R$ using $O(\lg f)$ bit operations \\
+(b) Multiplication of elements in $R$ using $O((\lg f)^2)$ bit operations \\
+(c) Inversion of elements in $R^*$ using $O((\lg f)^2)$ bit operations \\
+(d) Exponentiation of elements in $R$ to the power $e$ using $O((\lg e)(\lg f)^2)$ bit operations 
+\end{thm}
+
+
+
+Most algorithms for FPFF procede in three stages. First factorization of the polynomial is reduced to factoring a set of squarefree polynomials. Then factorization of each of these squarefree polynomials is reduced to factoring a set of polynomials st each irreducible factor of these polynomial has the same degree. Deterministic polynomial time algorithms are known for both these problems. The precise running times are given in \ref{runtimeSQF} and \ref{runtimeEqualDegFac}. \\
+
+\noindent To Do: explicit description of squarefree and equal degree factorization algorithms
+
+\begin{thm}
+\label{runtimeSQF}
+Theorem 5.9. (Bach 7.5.1-7.5.2 p.170) If $f$ is a monic element of $\Fq[X]$ and $\deg f > 0$, then a factorization $f = f_1^{e_1} \dots f_r^{e_r}$ where each $f_i$ is monic and squarefree can be computed in $O((\deg f)(\lg f)^2)$ bit operations.
+\end{thm}
+% I modified dg f to deg f
+
+\begin{thm}
+\label{runtimeEqualDegFac}
+Let $f$ be a squarefree polynomial of degree $d$. Then $f = f_1^{e_1} \dots f_r^{e_r}$ where $f_i$ is the product of all the monic degree $i$ irreducible factors of $f$ can be computed in $O((\deg f + \lg q)(\lg f)^2)$ bit operations.
+\end{thm}
+% I modified dg f to deg f
+
+\noindent There are a varity of probabalistic distinct degree factorization algorithms. The Cantor Zassenhaus algorithm is a conceptually simple variant. This is given in algorithm 1. 
+
+
+
+\begin{cor}
+Let $q$ be a prime power, $\Fq$ a finite field, $f$ a squarefree polynomial in $\Fq[X]$ of degree $n$, and $E$ a splitting field of $f$. Let
+$$f = \prod_{i=1}^r{f_i}$$
+
+\noindent with $f_1, \ldots, f_r$ irreducible polynomials and $e_1, \ldots, e_r$ positive integers. If there exists $1 \leq j \leq n$ st $1 < \deg(h_j) < \deg(f)$ then completely factoring $f$ in $E$ reduces to factoring $h_1, \ldots, h_r$ in $E$ reduces to factoring polynomials $h, g_1, \ldots, g_t$ for $t \leq r$ st $\deg(h_i) < \deg(f)$ with coefficients in $E$.
+\end{cor}
+
+\begin{proof}
+The reduction is done in two stages. First, factoring $f$ in $\Fq[X]$ reduces to factoring a polynomial $h$ st $\deg(h) = \sum_{j \neq i}{\deg h_j} + {\deg h_i} \leq \deg(f)$.
+ 
+If the factorization of these polynomials is given then we can obtain $f_j$ in $\Fq$ in polynomial time in $\deg(f)$ and $\log q$. Each $f_j$ splits in $E$ so its factorization reduces to factoring polynomials $h_j$ with coefficients in $\Fp$ st $\deg h_j < \deg f$.
+\end{proof}
+
+[Draft note : the splitting field can have degree up to $n!$ over $\Fq$: The theorem applies as well to factoring each of the $h_j$ in the respective subfields of the splitting field in which they split. Still have to bound the complexity]
+
+\begin{thm}
+Let $q$ be a prime power, $f$ a polynomial with coefficients in $\Fq$, and $\alpha \in \Fq[X]/(f)$. There is an algorithm to compute the norm of $\alpha$ that is polynomial time in $\log q$ and the degree of $f$.
+\end{thm}
+
+This theorem is a consequence of that fact that the minimal polynomial of $g \in \Fq[X]/(f)$ can be computed in polynomial time. See Bach and Shallit [1996] Theorem 7.8.1. 
+
+%
+% Mappings onto subgroups
+%
+For $q$ a prime power and $f \in \Fq[X]$ and squarefree let $B(f, \Fq)$ be the Berlekamp subalgebra of $\Fq[X]/(f)$. For $d$ dividing $q - 1$, and $H_d$ the multiplicative subgroup of $\Fq^*$ of elements of order dividing $d$ let
+
+$$\chi_d : \Fq^* \rightarrow H_d$$
+$$\chi_d(x) = x^{\frac {q-1} {d}}$$
+
+\begin{thm}
+(Euler's criterion). Let $x \in \Fq^*$ and $l$ a prime st $l \mid q -1$ then $\chi_l(x) \not= 1$ iff $x$ is a $l$th nonresidue in $\Fq^*$.
+\end{thm}
+
+Euler's criterion is generalized by the following theorem.
+
+\begin{thm} 
+Let $x \in \Fq^*$ and $l$ a prime st $l \mid q-1$ then $\chi_{l^i}(x) \not= 1$ iff $i < v_l(\Ind(x))$.
+\end{thm}
+
+For $f \in \Fq[X]$ st $f$ is squarefree and has degree $k$, and $\alpha \in B(f, Fq)$ define
+$$\chi_d(\alpha) = (\chi_d(\alpha_1), \dots, \chi_d(\alpha_k))$$
+
+\begin{thm}
+Let $\alpha \in B(f, \Fq)$ and $l$ a prime st $l \mid q - 1$ then $\chi_{l^i}(\alpha) \in \Fq[X]$ iff there exists $\omega$ an $l^i$ root of unity in $\Fq^*$ st
+$$\chi_{l^i}(\alpha_j)=\omega$$
+for all $1 \leq j \leq n$. 
+\end{thm}
+
+Finally we state an important theorem of Lenstra on constructing isomorphisms between finite fields.
+
+\begin{thm} 
+\label{constructingIsomorph}
+Let $p$ be a prime number, $m$ be a natural number, and $f_1, f_2$ two irreducible polynomials in $\Fp[X]$ of degree $m$. All isomorphisms between the fields $\Fp[X]/(f_1)$ and $\Fp[X]/(f_2)$ can be found in polynomial time in $\log p$ and $m$.
+\end{thm}
+
+\ref{constructingIsomorph} can be generalized to models of finite fields other than $\Fq[X]/(f)$.
+
+
+
+
+
+
+
+
+\end{document}
